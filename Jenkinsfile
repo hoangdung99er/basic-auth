@@ -54,19 +54,26 @@ pipeline {
             }
         }
         stage("Apply K8S") {
-            steps {
-                echo "Deploying to K8S"
-                dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                    sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
+            parallel {
+                stage('Expose Docker Tag') {
+                    sh "chmod +x exposeDockerTag.sh ${DOCKER_TAG}"
+                    sh './exposeDockerTag.sh'
                 }
-                dir("${CURRENT_WORKING_DIR}/postgres-helm") {
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                    sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-                }
-                dir("${CURRENT_WORKING_DIR}/user-api-helm") {
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                    sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
+                stage('Deploying to K8S') {
+                    steps {
+                        dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                            sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
+                            sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
+                        }
+                        dir("${CURRENT_WORKING_DIR}/postgres-helm") {
+                            sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
+                            sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
+                        }
+                        dir("${CURRENT_WORKING_DIR}/user-api-helm") {
+                            sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
+                            sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
+                        }
+                    }
                 }
             }
         }
