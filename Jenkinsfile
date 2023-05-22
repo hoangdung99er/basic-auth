@@ -2,11 +2,6 @@ def getCurrentWorkspace() {
    return "${WORKSPACE.split('@')[0]}"
 }
 
-def getDockerTag(){
-    def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
-    return tag
-}
-
 def namespace = "default"
 
 pipeline {
@@ -47,18 +42,18 @@ pipeline {
                 }
             }
         }
-        stage("Push Image") {
-            steps {
-                sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
-                sh "./docker-push-image.sh ${DOCKER_TAG}"
-            }
-        }
-        stage('Expose Docker Tag') {
-            steps {
-                sh "chmod +x exposeDockerTag.sh"
-                sh "export TAG_IMAGE=${DOCKER_TAG}"
-            }
-        }
+        // stage("Push Image") {
+        //     steps {
+        //         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
+        //         sh "./docker-push-image.sh ${DOCKER_TAG}"
+        //     }
+        // }
+        // stage('Expose Docker Tag') {
+        //     steps {
+        //         sh "chmod +x exposeDockerTag.sh"
+        //         sh "export TAG_IMAGE=${DOCKER_TAG}"
+        //     }
+        // }
         stage('Deploying to K8S') {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
@@ -76,4 +71,9 @@ pipeline {
             }
         }
     }
+}
+
+def getDockerTag(){
+    def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
+    return tag
 }
