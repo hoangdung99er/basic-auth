@@ -58,7 +58,7 @@ pipeline {
                 stage('Expose Docker Tag') {
                     steps {
                         sh "chmod +x exposeDockerTag.sh"
-                        sh "./exposeDockerTag.sh ${DOCKER_TAG}"
+                        sh ". exposeDockerTag.sh ${DOCKER_TAG}"
                         echo "TAG IMAGE: ${TAG_IMAGE}"
                     }
                 }
