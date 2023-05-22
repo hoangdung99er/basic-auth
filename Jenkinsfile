@@ -40,21 +40,21 @@ pipeline {
                 }
             }
         }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         dir("${CURRENT_WORKING_DIR}") {
-        //             sh "chmod +x changeTag.sh docker-push-image.sh"
-        //             sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-        //             sh "docker-compose -f docker-compose-build-custom-tag.yaml build --parallel"
-        //         }
-        //     }
-        // }
-        // stage("Push Image") {
-        //     steps {
-        //         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
-        //         sh "./docker-push-image.sh ${DOCKER_TAG}"
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                dir("${CURRENT_WORKING_DIR}") {
+                    sh "chmod +x changeTag.sh docker-push-image.sh"
+                    sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
+                    sh "docker-compose -f docker-compose-build-custom-tag.yaml build --parallel"
+                }
+            }
+        }
+        stage("Push Image") {
+            steps {
+                sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
+                sh "./docker-push-image.sh ${DOCKER_TAG}"
+            }
+        }
         stage("Apply K8S") {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
