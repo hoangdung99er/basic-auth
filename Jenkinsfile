@@ -55,14 +55,18 @@ pipeline {
         }
         stage("Apply K8S") {
             steps {
+                echo "Deploying to K8S"
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                    echo "Deploying to K8S"
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" auth-helm/values.yaml'
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" postgres-helm/values.yaml'
-                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" user-api-helm/values.yaml'
-                    sh "helm --namespace=$namespace upgrade auth-helm -f ./values.yaml auth-helm"
-                    sh "helm --namespace=$namespace upgrade postgres-helm -f ./values.yaml postgres-helm"
-                    sh "helm --namespace=$namespace upgrade user-api-helm -f ./values.yaml user-api-helm"
+                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                    sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
+                }
+                dir("${CURRENT_WORKING_DIR}/postgres-helm") {
+                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                    sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
+                }
+                dir("${CURRENT_WORKING_DIR}/user-api-helm") {
+                    sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                    sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
                 }
             }
         }
