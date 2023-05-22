@@ -9,7 +9,7 @@ pipeline {
         CURRENT_WORKING_DIR = getCurrentWorkspace()
         DOCKER_HUB_USER = "hoangdung99er"
         DOCKER_HUB_PASSWORD = "TamSoTam888"
-        DOCKER_TAG = getDockerTag()
+        // DOCKER_TAG = getDockerTag()
     }
 
     agent any
