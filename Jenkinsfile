@@ -57,6 +57,7 @@ pipeline {
             steps {
                 sh "chmod +x exposeDockerTag.sh"
                 sh "export TAG_IMAGE=${DOCKER_TAG}"
+                echo "$TAG_IMAGE"
             }
         }
         stage('Deploying to K8S') {
