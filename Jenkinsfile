@@ -12,8 +12,8 @@ def namespace = "default"
 pipeline {
     environment {
         CURRENT_WORKING_DIR = getCurrentWorkspace()
-        DOCKER_HUB_USER = credentials("docker-hub-user")
-        DOCKER_HUB_PASSWORD = credentials("docker-hub-password")
+        DOCKER_HUB_USER = "hoangdung99er"
+        DOCKER_HUB_PASSWORD = "TamSoTam888"
         DOCKER_TAG = getDockerTag()
     }
 
