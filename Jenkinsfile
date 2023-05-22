@@ -17,9 +17,7 @@ pipeline {
         DOCKER_TAG = "v1.0.10"
     }
 
-    agent {
-        label 'agentc'
-    }
+    agent any
     options {
         skipDefaultCheckout(true)
     }
