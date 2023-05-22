@@ -53,30 +53,26 @@ pipeline {
         //         sh "./docker-push-image.sh ${DOCKER_TAG}"
         //     }
         // }
-        stage("Apply K8S") {
-            parallel {
-                stage('Expose Docker Tag') {
-                    steps {
-                        sh "chmod +x exposeDockerTag.sh"
-                        sh "export TAG_IMAGE=$DOCKER_TAG"
-                    }
+        stage('Expose Docker Tag') {
+            steps {
+                sh "chmod +x exposeDockerTag.sh"
+                sh "./exposeDockerTag.sh ${DOCKER_TAG}"
+            }
+        }
+        stage('Deploying to K8S') {
+            steps {
+                dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                    sh 'yq e -i ".image.tag |= env(TAG_IMAGE)" values.yaml'
+                    // sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
                 }
-                stage('Deploying to K8S') {
-                    steps {
-                        dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                            sh 'yq e -i ".image.tag |= env(TAG_IMAGE)" values.yaml'
-                            sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
-                        }
-                        dir("${CURRENT_WORKING_DIR}/postgres-helm") {
-                            sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
-                            sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-                        }
-                        dir("${CURRENT_WORKING_DIR}/user-api-helm") {
-                            sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
-                            sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
-                        }
-                    }
-                }
+                // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
+                //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
+                //     sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
+                // }
+                // dir("${CURRENT_WORKING_DIR}/user-api-helm") {
+                //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
+                //     sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
+                // }
             }
         }
     }
