@@ -38,45 +38,46 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                dir("${CURRENT_WORKING_DIR}") {
-                    sh "chmod +x changeTag.sh docker-push-image.sh"
-                    sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-                    sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
-                }
-            }
-        }
-        stage("Push Image") {
-            steps {
-                sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
-                sh "./docker-push-image.sh ${DOCKER_TAG}"
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         dir("${CURRENT_WORKING_DIR}") {
+        //             sh "chmod +x changeTag.sh docker-push-image.sh"
+        //             sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
+        //             sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
+        //         }
+        //     }
+        // }
+        // stage("Push Image") {
+        //     steps {
+        //         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
+        //         sh "./docker-push-image.sh ${DOCKER_TAG}"
+        //     }
+        // }
         stage("Apply K8S") {
             parallel {
                 stage('Expose Docker Tag') {
                     steps {
                         sh "chmod +x exposeDockerTag.sh"
                         sh "./exposeDockerTag.sh ${DOCKER_TAG}"
+                        echo "$TAG_IMAGE"
                     }
                 }
-                stage('Deploying to K8S') {
-                    steps {
-                        dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                            sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                            sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
-                        }
-                        dir("${CURRENT_WORKING_DIR}/postgres-helm") {
-                            sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                            sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-                        }
-                        dir("${CURRENT_WORKING_DIR}/user-api-helm") {
-                            sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
-                            sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
-                        }
-                    }
-                }
+                // stage('Deploying to K8S') {
+                //     steps {
+                //         dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                //             sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                //             sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
+                //         }
+                //         dir("${CURRENT_WORKING_DIR}/postgres-helm") {
+                //             sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                //             sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
+                //         }
+                //         dir("${CURRENT_WORKING_DIR}/user-api-helm") {
+                //             sh 'yq e -i ".image.tag = ${DOCKER_TAG}" values.yaml'
+                //             sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
+                //         }
+                //     }
+                // }
             }
         }
     }
