@@ -62,7 +62,7 @@ pipeline {
         stage('Deploying to K8S') {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                    sh 'yq e -i ".image.tag |= env(TAG_IMAGE)" values.yaml'
+                    sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade auth-helm -f values.yaml auth-helm"
                 }
                 // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
