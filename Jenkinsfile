@@ -2,10 +2,10 @@ def getCurrentWorkspace() {
    return "${WORKSPACE.split('@')[0]}"
 }
 
-// def getDockerTag(){
-//     def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
-//     return tag
-// }
+def getDockerTag(){
+    def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
+    return tag
+}
 
 def namespace = "default"
 
@@ -38,21 +38,21 @@ pipeline {
                 }
             }
         }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         dir("${CURRENT_WORKING_DIR}") {
-        //             sh "chmod +x changeTag.sh docker-push-image.sh"
-        //             sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-        //             sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
-        //         }
-        //     }
-        // }
-        // stage("Push Image") {
-        //     steps {
-        //         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
-        //         sh "./docker-push-image.sh ${DOCKER_TAG}"
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                dir("${CURRENT_WORKING_DIR}") {
+                    sh "chmod +x changeTag.sh docker-push-image.sh"
+                    sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
+                    sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
+                }
+            }
+        }
+        stage("Push Image") {
+            steps {
+                sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
+                sh "./docker-push-image.sh ${DOCKER_TAG}"
+            }
+        }
         stage('Expose Docker Tag') {
             steps {
                 sh "chmod +x exposeDockerTag.sh"
