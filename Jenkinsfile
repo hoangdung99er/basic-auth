@@ -59,7 +59,7 @@ pipeline {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
-                    sh "helm install -n default auth-helm -f values.yaml auth-helm"
+                    sh "helm install -n default auth-helm -f values.yaml ."
                 }
                 // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
                 //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
