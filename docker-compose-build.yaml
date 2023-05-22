@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  db:
+    build:
+      context: ./postgres
+    image: hoangdung99er/postgres-db:tagVersion
+  user-api:
+    build:
+      context: ./user-api
+    image: hoangdung99er/user-api:tagVersion
+  frontend:
+    build:
+      context: ./frontend
+    image: hoangdung99er/frontend:tagVersion

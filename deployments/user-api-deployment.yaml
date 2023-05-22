@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+  namespace: default
+  labels:
+    service: user-deployment
+spec:
+  selector:
+    matchLabels:
+      service: user-api
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        service: user-api
+    spec:
+      containers:
+      - name: user-api
+        image: docker.io/hoangdung99er/user-api:v1.0.2
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "500m"    
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        env:
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: api-environment
+                key: POSTGRES_HOST
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: api-environment
+                key: POSTGRES_DB
+          - name: JWT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: api-environment
+                key: JWT_SECRET
+          - name: URL
+            valueFrom:
+              configMapKeyRef:
+                name: api-environment
+                key: URL
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_USERNAME
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    service: user-api
+
+
+
+    

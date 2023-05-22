@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  db:
+    image: postgres-db:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+  user-api:
+    image: user-api:latest
+    ports:
+      - "3000:3000"
+    environment:
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_HOST: host.docker.internal
+      JWT_SECRET: $JWT_SECRET
+      URL: $URL
+  frontend:
+    image: hoangdung99er/frontend:v1.0.3
+    ports:
+      - "4200:80"
+volumes:
+  db:
+    driver: local

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverseproxy
+  labels:
+    service: reverseproxy
+spec:
+  selector:
+    matchLabels:
+      service: reverseproxy
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        service: reverseproxy
+    spec:
+      containers:
+      - name: reverseproxy
+        image: docker.io/hoangdung99er/reverseproxy:v1.0.3
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 500m
+      imagePullSecrets:
+        - name: regcred
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: reverseproxy
+  name: reverseproxy
+spec:
+  ports:
+  - name: "80"
+    port: 80
+    targetPort: 80
+  selector:
+    service: reverseproxy

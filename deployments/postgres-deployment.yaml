@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deploy
+  namespace: default
+  labels:
+    postgres-srv: postgres
+spec:
+  selector:
+    matchLabels:
+      postgres-srv: postgres
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        postgres-srv: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: docker.io/hoangdung99er/postgres-db:v1.0.0
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "500m"            
+        ports:
+        - containerPort: 5432
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  ports:
+  - name: "5432"
+    # port - port number exposed internally in cluster
+    port: 5432
+    # targetPort - port that containers are listening on
+    targetPort: 5432
+  selector:
+    postgres-srv: postgres
