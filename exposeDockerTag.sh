@@ -1,0 +1,1 @@
+export TAG_IMAGE=$1
