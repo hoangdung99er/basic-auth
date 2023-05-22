@@ -57,8 +57,8 @@ pipeline {
             parallel {
                 stage('Expose Docker Tag') {
                     steps {
-                        sh "chmod +x exposeDockerTag.sh ${DOCKER_TAG}"
-                        sh './exposeDockerTag.sh'
+                        sh "chmod +x exposeDockerTag.sh"
+                        sh "./exposeDockerTag.sh ${DOCKER_TAG}"
                     }
                 }
                 stage('Deploying to K8S') {
