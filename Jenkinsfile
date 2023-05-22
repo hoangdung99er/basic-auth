@@ -43,7 +43,7 @@ pipeline {
                 dir("${CURRENT_WORKING_DIR}") {
                     sh "chmod +x changeTag.sh docker-push-image.sh"
                     sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-                    sh "docker-compose -f docker-compose-build-custom-tag.yaml build --parallel"
+                    sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
                 }
             }
         }
