@@ -14,7 +14,7 @@ pipeline {
         CURRENT_WORKING_DIR = getCurrentWorkspace()
         DOCKER_HUB_USER = credentials("docker-hub-user")
         DOCKER_HUB_PASSWORD = credentials("docker-hub-password")
-        DOCKER_TAG = "v1.0.10"
+        DOCKER_TAG = getDockerTag()
     }
 
     agent any
