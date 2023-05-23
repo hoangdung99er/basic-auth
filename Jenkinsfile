@@ -59,57 +59,83 @@ pipeline {
         //         echo "DEPLOYMENT: $DEPLOYMENT"
         //     }
         // }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         dir("${CURRENT_WORKING_DIR}") {
-        //             sh "chmod +x changeTag.sh docker-push-image.sh"
-        //             sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-        //             sh "./changeTag.sh ${DOCKER_TAG} deployments/frontend-deployment.yaml deployments/frontend-deployment-updated.yaml"
-        //             sh "./changeTag.sh ${DOCKER_TAG} deployments/postgres-deployment.yaml deployments/postgres-deployment-updated.yaml"
-        //             sh "./changeTag.sh ${DOCKER_TAG} deployments/user-api-deployment.yaml deployments/user-api-deployment-updated.yaml"
-        //             sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
-        //         }
-        //     }
-        // }
-        // stage("Push Image") {
-        //     steps {
-        //         sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
-        //         sh "./docker-push-image.sh ${DOCKER_TAG}"
-        //     }
-        // }
-        // stage('Expose Docker Tag') {
-        //     steps {
-        //         sh "chmod +x exposeDockerTag.sh"
-        //         sh "export TAG_IMAGE=${DOCKER_TAG}"
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                dir("${CURRENT_WORKING_DIR}") {
+                    sh "chmod +x changeTag.sh docker-push-image.sh"
+                    sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/frontend-deployment.yaml deployments/frontend-deployment-updated.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/postgres-deployment.yaml deployments/postgres-deployment-updated.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/user-api-deployment.yaml deployments/user-api-deployment-updated.yaml"
+                    sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
+                }
+            }
+        }
+        stage("Push Image") {
+            steps {
+                sh 'docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}'
+                sh "./docker-push-image.sh ${DOCKER_TAG}"
+            }
+        }
+        stage('Expose Docker Tag') {
+            steps {
+                sh "chmod +x exposeDockerTag.sh"
+                sh "export TAG_IMAGE=${DOCKER_TAG}"
+            }
+        }
         stage('Deploying to K8S') {
             steps {
                 dir("${CURRENT_WORKING_DIR}") {
                     script {
                         sh "chmod +x changeHostName.sh"
                         sh '''
-                            USER_API=user-api
-                            USER_APIDEPLOYMENT=$(kubectl get deploy |grep -E "^${USER_API}" |wc -l)
-                            if [ $DEPLOYMENT == 0 ]; then
+                            FRONTEND_DEPLOY=frontend-deploy
+                            FRONTEND_DEPLOYMENT=$(kubectl get deploy |grep -E "^${FRONTEND_DEPLOY}" |wc -l)
+                            if [ $FRONTEND_DEPLOYMENT == 0 ]; then
                                 kubectl apply -f deployments/frontend-deployment-updated.yaml
                             else
-                                kubectl set image deployment/user-api user-api=${DOCKER_HUB_USER}/user-api:${DOCKER_TAG}
+                                kubectl set image deployment/frontend-deploy frontend=${DOCKER_HUB_USER}/frontend:${DOCKER_TAG}
                             fi
+                            echo "FRONTEND SERVICE DEPLOYED"
+
+                            POSTGRES_DEPLOY=postgres-deploy
+                            POSTGRES_DEPLOYMENT=$(kubectl get deploy |grep -E "^${POSTGRES_DEPLOY}" |wc -l)
+                            if [ $POSTGRES_DEPLOYMENT == 0 ]; then
+                                kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            else
+                                kubectl delete deploy ${USER_API}
+                                kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            fi
+                            echo "POSTGRES SERVICE DEPLOYED"
+
+                            POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
+                            ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
+
+                            kubectl apply -f deployments/env-configmap-updated.yaml
+                            echo "ENVIRONMENT CONFIMAP DEPLOYED"
+
+                            kubectl apply -f deployments/env-secret.yaml
+                            echo "ENVIRONMENT SECRET DEPLOYED"
+
+                            USER_API=user-api
+                            DEPLOYMENT=$(kubectl get deploy |grep -E "^${USER_API}" |wc -l)
+                            if [ $DEPLOYMENT == 0 ]; then
+                                kubectl apply -f deployments/user-api-deployment-updated.yaml
+                            else
+                                kubectl delete deploy ${USER_API}
+                                kubectl apply -f deployments/user-api-deployment-updated.yaml
+                            fi
+                            echo "USER SERVICE DEPLOYED"
                         '''
                         // sh "kubectl apply -f deployments/frontend-deployment-updated.yaml"
                         // sh "kubectl apply -f deployments/postgres-deployment-updated.yaml"
-                        // POSTGRES_HOST=userApiIPAddress()
-                        // sh "./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
-
-                        // sh 'keystring=$(echo "$POSTGRES_HOST") /opt/homebrew/Cellar/jenkins/yq/4.33.3/bin/yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
 
                         // sh "kubectl apply -f deployments/env-configmap-updated.yaml"
                         // sh "kubectl apply -f deployments/env-secret.yaml"
                         // sh "kubectl apply -f deployments/user-api-deployment-updated.yaml"
                         // sh "kubectl apply -f deployments/ingress.yaml"
 
-                        echo "DEPLOYED"
+                        echo "APPLICATION DEPLOYED"
                     }
                 }
             }
