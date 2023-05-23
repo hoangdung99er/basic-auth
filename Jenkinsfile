@@ -74,12 +74,12 @@ pipeline {
                             sh "kubectl apply -f deployments/frontend-deployment.yaml"
                             sh "kubectl apply -f deployments/postgres-deployment.yaml"
                             POSTGRES_HOST=userApiIPAddress()
-                            echo "${POSTGRES_HOST}"
-                            // sh 'keystring=$(echo "$POSTGRES_HOST") yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
-                            // sh "kubectl apply -f deployments/env-configmap.yaml"
-                            // sh "kubectl apply -f deployments/env-secret.yaml"
-                            // sh "kubectl apply -f deployments/user-api-deployment.yaml"
-                            // sh "kubectl apply -f deployments/ingress.yaml"
+                            sh "export POSTGRES_HOST=${POSTGRES_HOST}"
+                            sh 'keystring=$(echo "$POSTGRES_HOST") yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
+                            sh "kubectl apply -f deployments/env-configmap.yaml"
+                            sh "kubectl apply -f deployments/env-secret.yaml"
+                            sh "kubectl apply -f deployments/user-api-deployment.yaml"
+                            sh "kubectl apply -f deployments/ingress.yaml"
 
                             // sh "helm install -n ${namespace} auth-helm -f values.yaml ."
                     //     } else {
