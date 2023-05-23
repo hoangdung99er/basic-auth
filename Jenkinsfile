@@ -3,7 +3,7 @@ def getCurrentWorkspace() {
 }
 
 def checkExistDeployment(svc) {
-    def deployed = sh(returnStdout: true, script: "helm list |grep -E '^${svc}' |wc -l")
+    def deployed = sh(returnStdout: true, script: "kubectl get deploy |grep -E '^${svc}' |wc -l")
     return deployed
 }
 
