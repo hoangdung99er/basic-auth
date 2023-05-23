@@ -61,7 +61,7 @@ pipeline {
         // }
         stage('Deploying to K8S') {
             steps {
-                dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                dir("${CURRENT_WORKING_DIR}") {
                     // script {
                         // DEPLOYED=checkExistReleaseChart()
                         // echo "DEPLOYED: ${DEPLOYED}"
