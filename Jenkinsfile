@@ -66,8 +66,9 @@ pipeline {
                         // DEPLOYED=checkExistReleaseChart()
                         // echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
-                            // sh "kubectl apply -f deployments/frontend-deployment.yaml"
-                            sh "helm install -n ${namespace} auth-helm -f values.yaml ."
+                            sh "kubectl get nodes"
+                            sh "kubectl apply -f deployments/frontend-deployment.yaml"
+                            // sh "helm install -n ${namespace} auth-helm -f values.yaml ."
                     //     } else {
                     //         sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
                     //     }
