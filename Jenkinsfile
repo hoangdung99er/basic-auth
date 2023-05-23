@@ -56,16 +56,18 @@ pipeline {
         // }
         stage('Deploying to K8S') {
             steps {
-                PACKAGE=auth-helm
-                DEPLOYED=$(helm list |grep -E "^${PACKAGE}" |wc -l)
+                
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                    script {
+                        PACKAGE=auth-helm
+                        DEPLOYED=$(helm list |grep -E "^${PACKAGE}" |wc -l)
+                        if [ $DEPLOYED == 0 ] ; then
+                            helm install -n ${namespace} ${PACKAGE}-f values.yaml .
+                        else
+                            helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} .
+                    }
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
-
-                    if [ $DEPLOYED == 0 ] ; then
-                        helm install -n ${namespace} ${PACKAGE}-f values.yaml .
-                    else
-                        helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} .
                 }
                 // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
                     // sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
