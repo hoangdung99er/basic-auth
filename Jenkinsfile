@@ -59,7 +59,7 @@ pipeline {
                 // echo "DEPLOYMENT: $DEPLOYMENT"
                 sh '''
                     USER_API=user-api
-                    DEPLOYMENT=$(kubectl get deploy |grep -E '^${USER_API}' |wc -l)
+                    DEPLOYMENT=$(kubectl get deploy |grep -E "^${USER_API}" |wc -l)
                     if [ $DEPLOYMENT == 0 ]; then
                         echo "0"
                     else
