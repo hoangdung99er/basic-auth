@@ -12,6 +12,11 @@ def userApiIPAddress() {
     return ipaddr
 }
 
+def getDockerTag() {
+    def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
+    return tag
+}
+
 def namespace = "default"
 
 pipeline {
@@ -19,7 +24,7 @@ pipeline {
         CURRENT_WORKING_DIR = getCurrentWorkspace()
         DOCKER_HUB_USER = "hoangdung99er"
         DOCKER_HUB_PASSWORD = "TamSoTam888"
-        // DOCKER_TAG = getDockerTag()
+        DOCKER_TAG = getDockerTag()
     }
 
     agent any
@@ -108,9 +113,3 @@ pipeline {
         }
     }
 }
-
-def getDockerTag() {
-    def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
-    return tag
-}
-
