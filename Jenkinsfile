@@ -57,20 +57,26 @@ pipeline {
         stage('Deploying to K8S') {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                    PACKAGE=auth-helm
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
-                    sh "helm install -n default auth-helm -f values.yaml ."
+                    DEPLOYED=$(helm list |grep -E "^${PACKAGE}" |wc -l)
+
+                    if [ $DEPLOYED == 0 ] ; then
+                        helm install -n ${namespace} ${PACKAGE}-f values.yaml .
+                    else
+                        helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} .
                 }
-                dir("${CURRENT_WORKING_DIR}/postgres-helm") {
+                // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
                     // sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-                    sh "helm install -n default postgres-helm -f values.yaml ."
-                }
-                dir("${CURRENT_WORKING_DIR}/user-api-helm") {
+                    // sh "helm install -n default postgres-helm -f values.yaml ."
+                // }
+                // dir("${CURRENT_WORKING_DIR}/user-api-helm") {
                 //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
                 //     sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
-                    sh "helm install -n default user-api-helm -f values.yaml ."
-                }
+                    // sh "helm install -n default user-api-helm -f values.yaml ."
+                // }
             }
         }
     }
