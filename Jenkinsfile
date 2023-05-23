@@ -48,18 +48,17 @@ pipeline {
                 }
             }
         }
-        stage("Dummy") {
-            steps {
-                // DEPLOYMENT=checkExistDeployment("user-api")
-                // if(DEPLOYMENT == 1) {
-                //     echo "1"
-                // } else {
-                //     echo "2"
-                // }
-                // echo "DEPLOYMENT: $DEPLOYMENT"
-                
-            }
-        }
+        // stage("Dummy") {
+        //     steps {
+        //         DEPLOYMENT=checkExistDeployment("user-api")
+        //         if(DEPLOYMENT == 1) {
+        //             echo "1"
+        //         } else {
+        //             echo "2"
+        //         }
+        //         echo "DEPLOYMENT: $DEPLOYMENT"
+        //     }
+        // }
         // stage('Build Docker Image') {
         //     steps {
         //         dir("${CURRENT_WORKING_DIR}") {
