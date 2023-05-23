@@ -60,7 +60,7 @@ pipeline {
                     script {
                         DEPLOYED=checkExistReleaseChart(PACKAGE)
                         PACKAGE=auth-helm
-                        DEPLOYED=$(helm list |grep -E '^${package}' |wc -l)
+                        def DEPLOYED=$(helm list |grep -E '^${package}' |wc -l)
                         if (DEPLOYED == 0) {
                             sh "helm install -n ${namespace} ${PACKAGE}-f values.yaml ."
                         } else {
