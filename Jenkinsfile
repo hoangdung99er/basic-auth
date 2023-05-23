@@ -50,7 +50,7 @@ pipeline {
         }
         stage("Dummy") {
             steps {
-                DEPLOYMENT=checkExistDeployment("user-api")
+                // DEPLOYMENT=checkExistDeployment("user-api")
                 // if(DEPLOYMENT == 1) {
                 //     echo "1"
                 // } else {
