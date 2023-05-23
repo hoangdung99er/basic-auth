@@ -90,6 +90,6 @@ def getDockerTag() {
 }
 
 def checkExistReleaseChart(package) {
-    def deployed  = sh(returnStdout: true, script: "helm list |grep -E "^${package}" |wc -l")
+    def deployed  = sh(returnStdout: true, script: "helm list |grep -E '^${package}' |wc -l")
     return deployed
 }
