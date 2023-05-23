@@ -60,6 +60,7 @@ pipeline {
                     script {
                         DEPLOYED=checkExistReleaseChart(PACKAGE)
                         PACKAGE=auth-helm
+                        DEPLOYED=$(helm list |grep -E '^${package}' |wc -l)
                         if (DEPLOYED == 0) {
                             sh "helm install -n ${namespace} ${PACKAGE}-f values.yaml ."
                         } else {
@@ -87,9 +88,4 @@ pipeline {
 def getDockerTag() {
     def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
     return tag
-}
-
-def checkExistReleaseChart(package) {
-    def deployed  = sh "helm list |grep -E '^${package}' |wc -l"
-    return deployed
 }
