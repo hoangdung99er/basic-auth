@@ -57,16 +57,7 @@ pipeline {
                 //     echo "2"
                 // }
                 // echo "DEPLOYMENT: $DEPLOYMENT"
-                sh '''
-                    USER_API=user-api
-                    DEPLOYMENT=$(kubectl get deploy |grep -E "^${USER_API}" |wc -l)
-                    if [ $DEPLOYMENT == 0 ]; then
-                        echo "0"
-                    else
-                        echo "1"
-                    fi
-                    echo "deployed"
-                '''
+                
             }
         }
         // stage('Build Docker Image') {
@@ -93,44 +84,36 @@ pipeline {
         //         sh "export TAG_IMAGE=${DOCKER_TAG}"
         //     }
         // }
-        // stage('Deploying to K8S') {
-        //     steps {
-        //         dir("${CURRENT_WORKING_DIR}") {
-        //             script {
-        //                 // DEPLOYED=checkExistReleaseChart()
-        //                 // echo "DEPLOYED: ${DEPLOYED}"
-        //                 // if (DEPLOYED == 0) {
-        //                     sh "chmod +x changeHostName.sh"
-        //                     sh "kubectl apply -f deployments/frontend-deployment-updated.yaml"
-        //                     sh "kubectl apply -f deployments/postgres-deployment-updated.yaml"
-        //                     POSTGRES_HOST=userApiIPAddress()
-        //                     sh "./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
+        stage('Deploying to K8S') {
+            steps {
+                dir("${CURRENT_WORKING_DIR}") {
+                    script {
+                        sh "chmod +x changeHostName.sh"
+                        sh '''
+                            USER_API=user-api
+                            USER_APIDEPLOYMENT=$(kubectl get deploy |grep -E "^${USER_API}" |wc -l)
+                            if [ $DEPLOYMENT == 0 ]; then
+                                kubectl apply -f deployments/frontend-deployment-updated.yaml
+                            else
+                                kubectl set image deployment/user-api user-api=${DOCKER_HUB_USER}/user-api:${DOCKER_TAG}
+                            fi
+                        '''
+                        // sh "kubectl apply -f deployments/frontend-deployment-updated.yaml"
+                        // sh "kubectl apply -f deployments/postgres-deployment-updated.yaml"
+                        // POSTGRES_HOST=userApiIPAddress()
+                        // sh "./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
 
-        //                     // sh 'keystring=$(echo "$POSTGRES_HOST") /opt/homebrew/Cellar/jenkins/yq/4.33.3/bin/yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
+                        // sh 'keystring=$(echo "$POSTGRES_HOST") /opt/homebrew/Cellar/jenkins/yq/4.33.3/bin/yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
 
-        //                     sh "kubectl apply -f deployments/env-configmap-updated.yaml"
-        //                     sh "kubectl apply -f deployments/env-secret.yaml"
-        //                     sh "kubectl apply -f deployments/user-api-deployment-updated.yaml"
-        //                     sh "kubectl apply -f deployments/ingress.yaml"
+                        // sh "kubectl apply -f deployments/env-configmap-updated.yaml"
+                        // sh "kubectl apply -f deployments/env-secret.yaml"
+                        // sh "kubectl apply -f deployments/user-api-deployment-updated.yaml"
+                        // sh "kubectl apply -f deployments/ingress.yaml"
 
-        //                     // sh "helm install -n ${namespace} auth-helm -f values.yaml ."
-        //             //     } else {
-        //             //         sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
-        //             //     }
-        //             }
-        //             // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
-        //         }
-        //         // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
-        //             // sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
-        //             // sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-        //             // sh "helm install -n default postgres-helm -f values.yaml ."
-        //         // }
-        //         // dir("${CURRENT_WORKING_DIR}/user-api-helm") {
-        //         //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
-        //         //     sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
-        //             // sh "helm install -n default user-api-helm -f values.yaml ."
-        //         // }
-        //     }
-        // }
+                        echo "DEPLOYED"
+                    }
+                }
+            }
+        }
     }
 }
