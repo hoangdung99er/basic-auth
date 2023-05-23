@@ -98,18 +98,18 @@ pipeline {
                             fi
                             echo "FRONTEND SERVICE DEPLOYED"
 
-                            // POSTGRES_DEPLOY=postgres-deploy
-                            // POSTGRES_DEPLOYMENT=$(kubectl get deploy |grep -E "^${POSTGRES_DEPLOY}" |wc -l)
-                            // if [ $POSTGRES_DEPLOYMENT == 0 ]; then
-                            //     kubectl apply -f deployments/postgres-deployment-updated.yaml
-                            // else
-                            //     kubectl delete deploy ${POSTGRES_DEPLOY}
-                            //     kubectl apply -f deployments/postgres-deployment-updated.yaml
-                            // fi
-                            // echo "POSTGRES SERVICE DEPLOYED"
+                            # POSTGRES_DEPLOY=postgres-deploy
+                            # POSTGRES_DEPLOYMENT=$(kubectl get deploy |grep -E "^${POSTGRES_DEPLOY}" |wc -l)
+                            # if [ $POSTGRES_DEPLOYMENT == 0 ]; then
+                            #     kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            # else
+                            #     kubectl delete deploy ${POSTGRES_DEPLOY}
+                            #     kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            # fi
+                            # echo "POSTGRES SERVICE DEPLOYED"
 
-                            // POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
-                            // ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml
+                            # POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
+                            # ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml
 
                             kubectl apply -f deployments/env-configmap.yaml
                             echo "ENVIRONMENT CONFIMAP DEPLOYED"
