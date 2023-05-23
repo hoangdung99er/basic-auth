@@ -63,7 +63,7 @@ pipeline {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     script {
-                        // PACKAGE=auth-helm
+                        PACKAGE=auth-helm
                         DEPLOYED=checkExistReleaseChart()
                         echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
