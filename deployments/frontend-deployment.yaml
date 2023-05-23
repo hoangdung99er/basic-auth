@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: hoangdung99er/frontend:v1.0.5
+        image: hoangdung99er/frontend:tagVersion
         ports:
         - containerPort: 80
 ---
