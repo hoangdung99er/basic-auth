@@ -66,6 +66,7 @@ pipeline {
                         // DEPLOYED=checkExistReleaseChart()
                         // echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
+                            sh "kubectl get nodes"
                             sh "helm install -n ${namespace} auth-helm -f values.yaml ."
                     //     } else {
                     //         sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
