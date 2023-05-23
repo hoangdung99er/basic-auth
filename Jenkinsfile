@@ -53,9 +53,9 @@ pipeline {
                 dir("${CURRENT_WORKING_DIR}") {
                     sh "chmod +x changeTag.sh docker-push-image.sh"
                     sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
-                    sh "./changeTag.sh ${DOCKER_TAG} frontend-deployment.yaml frontend-deployment-updated.yaml"
-                    sh "./changeTag.sh ${DOCKER_TAG} postgres-deployment.yaml postgres-deployment-updated.yaml"
-                    sh "./changeTag.sh ${DOCKER_TAG} user-api-deployment.yaml user-api-deployment-updated.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/frontend-deployment.yaml deployments/frontend-deployment-updated.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/postgres-deployment.yaml deployments/postgres-deployment-updated.yaml"
+                    sh "./changeTag.sh ${DOCKER_TAG} deployments/user-api-deployment.yaml deployments/user-api-deployment-updated.yaml"
                     sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
                 }
             }
