@@ -50,22 +50,21 @@ pipeline {
         }
         stage("Dummy") {
             steps {
-                    DEPLOYMENT=checkExistDeployment("user-api")
-                    // if(DEPLOYMENT == 1) {
-                    //     echo "1"
-                    // } else {
-                    //     echo "2"
-                    // }
-                    // echo "DEPLOYMENT: $DEPLOYMENT"
-                    sh '''
-                        if [ $DEPLOYMENT == 0 ]; then
-                            echo "0"
-                        else
-                            echo "1"
-                        fi
-                        echo "deployed"
-                    '''
-                }
+                DEPLOYMENT=checkExistDeployment("user-api")
+                // if(DEPLOYMENT == 1) {
+                //     echo "1"
+                // } else {
+                //     echo "2"
+                // }
+                // echo "DEPLOYMENT: $DEPLOYMENT"
+                sh '''
+                    if [ $DEPLOYMENT == 0 ]; then
+                        echo "0"
+                    else
+                        echo "1"
+                    fi
+                    echo "deployed"
+                '''
             }
         }
         // stage('Build Docker Image') {
