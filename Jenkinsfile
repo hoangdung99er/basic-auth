@@ -69,11 +69,11 @@ pipeline {
                 dir("${CURRENT_WORKING_DIR}") {
                     script {
                         // DEPLOYED=checkExistReleaseChart()
-                        POSTGRES_HOST=userApiIPAddress()
                         // echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
                             sh "kubectl apply -f deployments/frontend-deployment.yaml"
                             sh "kubectl apply -f deployments/postgres-deployment.yaml"
+                            POSTGRES_HOST=userApiIPAddress()
                             echo "${POSTGRES_HOST}"
                             // sh 'keystring=$(echo "$POSTGRES_HOST") yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
                             // sh "kubectl apply -f deployments/env-configmap.yaml"
