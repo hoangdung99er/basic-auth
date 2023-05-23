@@ -2,6 +2,11 @@ def getCurrentWorkspace() {
    return "${WORKSPACE.split('@')[0]}"
 }
 
+def checkExistReleaseChart() {
+    def deployed = sh(returnStdout: true, script: "helm list |grep -E '^auth-helm' |wc -l")
+    return deployed
+}
+
 def namespace = "default"
 
 pipeline {
@@ -61,11 +66,11 @@ pipeline {
                         PACKAGE=auth-helm
                         DEPLOYED=checkExistReleaseChart()
                         echo "DEPLOYED: ${DEPLOYED}"
-                        // if (DEPLOYED == 0) {
-                        //     sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
-                        // } else {
-                        //     sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
-                        // }
+                        if (DEPLOYED == 0) {
+                            sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
+                        } else {
+                            sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
+                        }
                     }
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
@@ -90,7 +95,3 @@ def getDockerTag() {
     return tag
 }
 
-def checkExistReleaseChart() {
-    def deployed = sh(returnStdout: true, script: "")
-    return deployed
-}
