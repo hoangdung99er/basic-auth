@@ -52,7 +52,12 @@ pipeline {
             steps {
                 script {
                     DEPLOYMENT=checkExistDeployment("user-api")
-                    echo "$DEPLOYMENT"
+                    if($DEPLOYMENT == 1) {
+                        echo "1"
+                    } else {
+                        echo "2"
+                    }
+                    echo "DEPLOYMENT: $DEPLOYMENT"
                 }
             }
         }
