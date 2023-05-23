@@ -66,14 +66,19 @@ pipeline {
                         // DEPLOYED=checkExistReleaseChart()
                         // echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
-                            sh "kubectl get nodes"
                             sh "kubectl apply -f deployments/frontend-deployment.yaml"
+                            sh "kubectl apply -f deployments/postgres-deployment.yaml"
+                            sh "export POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)"
+                            sh 'keystring=$(echo "$POSTGRES_HOST") yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
+                            sh "kubectl apply -f deployments/env-configmap.yaml"
+                            sh "kubectl apply -f deployments/env-secret.yaml"
+                            sh "kubectl apply -f deployments/user-api-deployment.yaml"
+                            sh "kubectl apply -f deployments/ingress.yaml"
                             // sh "helm install -n ${namespace} auth-helm -f values.yaml ."
                     //     } else {
                     //         sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
                     //     }
                     // }
-                    // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
                 }
                 // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
