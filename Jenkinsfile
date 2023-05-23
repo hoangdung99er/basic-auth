@@ -56,11 +56,11 @@ pipeline {
         // }
         stage('Deploying to K8S') {
             steps {
+                PACKAGE=auth-helm
+                DEPLOYED=$(helm list |grep -E "^${PACKAGE}" |wc -l)
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
-                    PACKAGE=auth-helm
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
-                    DEPLOYED=$(helm list |grep -E "^${PACKAGE}" |wc -l)
 
                     if [ $DEPLOYED == 0 ] ; then
                         helm install -n ${namespace} ${PACKAGE}-f values.yaml .
