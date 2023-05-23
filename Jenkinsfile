@@ -71,12 +71,15 @@ pipeline {
                         // DEPLOYED=checkExistReleaseChart()
                         // echo "DEPLOYED: ${DEPLOYED}"
                         // if (DEPLOYED == 0) {
+                            sh "chmod +x changeHostName.sh"
                             sh "kubectl apply -f deployments/frontend-deployment.yaml"
                             sh "kubectl apply -f deployments/postgres-deployment.yaml"
                             POSTGRES_HOST=userApiIPAddress()
-                            sh "export POSTGRES_HOST=${POSTGRES_HOST}"
-                            sh 'keystring=$(echo "$POSTGRES_HOST") /opt/homebrew/Cellar/jenkins/yq/4.33.3/bin/yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
-                            sh "kubectl apply -f deployments/env-configmap.yaml"
+                            sh "./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
+
+                            // sh 'keystring=$(echo "$POSTGRES_HOST") /opt/homebrew/Cellar/jenkins/yq/4.33.3/bin/yq e -i ".data.POSTGRES_HOST = strenv(keystring)" deployments/env-configmap.yaml'
+
+                            sh "kubectl apply -f deployments/env-configmap-updated.yaml"
                             sh "kubectl apply -f deployments/env-secret.yaml"
                             sh "kubectl apply -f deployments/user-api-deployment.yaml"
                             sh "kubectl apply -f deployments/ingress.yaml"
