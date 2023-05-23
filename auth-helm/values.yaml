@@ -11,7 +11,7 @@ image:
   # Latest pulls the most up-to-date version
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.3"
+  tag: "v1.0.5"
 
 imagePullSecrets: []
 nameOverride: "auth-chart"
@@ -41,8 +41,8 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
-  port: 4200
+  type: LoadBalancer
+  port: 80
   containerPort: 80
 
 ingress:

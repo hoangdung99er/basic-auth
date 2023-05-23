@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: api-environment
 data:
-  POSTGRES_HOST: 10.102.142.190
+  POSTGRES_HOST: 10.0.14.243
   POSTGRES_DB: postgres
   JWT_SECRET: testing
   URL: http://myserver.local
