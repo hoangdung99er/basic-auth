@@ -63,26 +63,26 @@ pipeline {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     script {
-                        DEPLOYED=checkExistReleaseChart()
-                        echo "DEPLOYED: ${DEPLOYED}"
-                        if (DEPLOYED == 0) {
+                        // DEPLOYED=checkExistReleaseChart()
+                        // echo "DEPLOYED: ${DEPLOYED}"
+                        // if (DEPLOYED == 0) {
                             sh "helm install -n ${namespace} auth-helm -f values.yaml ."
-                        } else {
-                            sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
-                        }
-                    }
+                    //     } else {
+                    //         sh "helm --namespace=${namespace} upgrade -f values.yaml auth-helm ."
+                    //     }
+                    // }
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
                 }
                 // dir("${CURRENT_WORKING_DIR}/postgres-helm") {
                     // sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade postgres-helm -f values.yaml postgres-helm"
-                    // sh "helm install -n default postgres-helm -f values.yaml ."
+                    sh "helm install -n default postgres-helm -f values.yaml ."
                 // }
                 // dir("${CURRENT_WORKING_DIR}/user-api-helm") {
                 //     sh 'yq e -i ".image.tag = env(TAG_IMAGE)" values.yaml'
                 //     sh "helm --namespace=$namespace upgrade user-api-helm -f values.yaml user-api-helm"
-                    // sh "helm install -n default user-api-helm -f values.yaml ."
+                    sh "helm install -n default user-api-helm -f values.yaml ."
                 // }
             }
         }
