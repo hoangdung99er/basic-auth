@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: hoangdung99er/frontend:v1.0.3
+        image: hoangdung99er/frontend:v1.0.5
         ports:
         - containerPort: 80
 ---
@@ -27,8 +27,8 @@ metadata:
   name: frontend-service
 spec:
   ports:
-  - name: "4200"
-    port: 4200
+  - name: "http"
+    port: 80
     targetPort: 80
   selector:
     frontend-srv: frontend
