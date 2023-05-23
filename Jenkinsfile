@@ -103,7 +103,7 @@ pipeline {
                             if [ $POSTGRES_DEPLOYMENT == 0 ]; then
                                 kubectl apply -f deployments/postgres-deployment-updated.yaml
                             else
-                                kubectl delete deploy ${USER_API}
+                                kubectl delete deploy ${POSTGRES_DEPLOY}
                                 kubectl apply -f deployments/postgres-deployment-updated.yaml
                             fi
                             echo "POSTGRES SERVICE DEPLOYED"
