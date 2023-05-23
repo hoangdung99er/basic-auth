@@ -50,15 +50,21 @@ pipeline {
         }
         stage("Dummy") {
             steps {
-                script {
+                    // if(DEPLOYMENT == 1) {
+                    //     echo "1"
+                    // } else {
+                    //     echo "2"
+                    // }
+                    // echo "DEPLOYMENT: $DEPLOYMENT"
+                sh '''
                     DEPLOYMENT=checkExistDeployment("user-api")
-                    if(DEPLOYMENT == 1) {
+                    if [ $DEPLOYMENT == 0 ]; then
+                        echo "0"
+                    else
                         echo "1"
-                    } else {
-                        echo "2"
-                    }
-                    echo "DEPLOYMENT: $DEPLOYMENT"
-                }
+                    fi
+                    echo "deployed"
+                '''
             }
         }
         // stage('Build Docker Image') {
