@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: user-api
-        image: docker.io/hoangdung99er/user-api:v1.0.2
+        image: docker.io/hoangdung99er/user-api:tagVersion
         resources:
           limits:
             memory: "2Gi"
