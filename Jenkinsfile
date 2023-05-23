@@ -58,6 +58,7 @@ pipeline {
                 // }
                 // echo "DEPLOYMENT: $DEPLOYMENT"
                 sh '''
+                    DEPLOYMENT=0
                     if [ $DEPLOYMENT == 0 ]; then
                         echo "0"
                     else
