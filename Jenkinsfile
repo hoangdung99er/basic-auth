@@ -58,9 +58,9 @@ pipeline {
             steps {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     script {
+                        PACKAGE=auth-helm
                         DEPLOYED=checkExistReleaseChart(PACKAGE)
                         echo "DEPLOYED: ${DEPLOYED}"
-                        PACKAGE=auth-helm
                         if (DEPLOYED == 0) {
                             sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
                         } else {
