@@ -56,8 +56,8 @@ pipeline {
                     //     echo "2"
                     // }
                     // echo "DEPLOYMENT: $DEPLOYMENT"
+                DEPLOYMENT=checkExistDeployment("user-api")
                 sh '''
-                    DEPLOYMENT=checkExistDeployment("user-api")
                     if [ $DEPLOYMENT == 0 ]; then
                         echo "0"
                     else
