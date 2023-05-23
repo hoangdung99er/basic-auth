@@ -59,13 +59,13 @@ pipeline {
                 dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     script {
                         PACKAGE=auth-helm
-                        DEPLOYED=sh "helm list |grep -E '^auth-helm' |wc -l"
+                        DEPLOYED=checkExistReleaseChart()
                         echo "DEPLOYED: ${DEPLOYED}"
-                        if (DEPLOYED == 0) {
-                            sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
-                        } else {
-                            sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
-                        }
+                        // if (DEPLOYED == 0) {
+                        //     sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
+                        // } else {
+                        //     sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
+                        // }
                     }
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
@@ -88,4 +88,9 @@ pipeline {
 def getDockerTag() {
     def tag  = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
     return tag
+}
+
+def checkExistReleaseChart() {
+    def deployed = sh(returnStdout: true, script: "")
+    return deployed
 }
