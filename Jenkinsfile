@@ -109,7 +109,7 @@ pipeline {
                             echo "POSTGRES SERVICE DEPLOYED"
 
                             POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
-                            ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml"
+                            ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml
 
                             kubectl apply -f deployments/env-configmap-updated.yaml
                             echo "ENVIRONMENT CONFIMAP DEPLOYED"
