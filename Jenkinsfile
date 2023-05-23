@@ -61,17 +61,17 @@ pipeline {
         // }
         stage('Deploying to K8S') {
             steps {
-                // dir("${CURRENT_WORKING_DIR}/auth-helm") {
+                dir("${CURRENT_WORKING_DIR}/auth-helm") {
                     script {
-                        PACKAGE=auth-helm
+                        // PACKAGE=auth-helm
                         DEPLOYED=checkExistReleaseChart()
                         echo "DEPLOYED: ${DEPLOYED}"
-                        if (DEPLOYED == 0) {
-                            sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
-                        } else {
-                            sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
-                        }
-                    // }
+                        // if (DEPLOYED == 0) {
+                        //     sh "helm install -n ${namespace} ${PACKAGE} -f values.yaml ."
+                        // } else {
+                        //     sh "helm --namespace=${namespace} upgrade -f values.yaml ${PACKAGE} ."
+                        // }
+                    }
                     // sh 'keystring=$(echo "$TAG_IMAGE") yq e -i ".image.tag = strenv(keystring)" values.yaml'
                     // sh "helm --namespace=$namespace upgrade -f values.yaml auth-helm ."
                 }
