@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: docker.io/hoangdung99er/postgres-db:tagVersion
+        image: docker.io/hoangdung99er/postgres-db:16ce3d3783
         resources:
           limits:
             memory: "500Mi"

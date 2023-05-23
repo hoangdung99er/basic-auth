@@ -65,7 +65,7 @@ pipeline {
                     sh "chmod +x changeTag.sh docker-push-image.sh"
                     sh "./changeTag.sh ${DOCKER_TAG} docker-compose-build.yaml docker-compose-build-custom-tag.yaml"
                     sh "./changeTag.sh ${DOCKER_TAG} deployments/frontend-deployment.yaml deployments/frontend-deployment-updated.yaml"
-                    sh "./changeTag.sh ${DOCKER_TAG} deployments/postgres-deployment.yaml deployments/postgres-deployment-updated.yaml"
+                    // sh "./changeTag.sh ${DOCKER_TAG} deployments/postgres-deployment.yaml deployments/postgres-deployment-updated.yaml"
                     sh "./changeTag.sh ${DOCKER_TAG} deployments/user-api-deployment.yaml deployments/user-api-deployment-updated.yaml"
                     sh "docker compose -f docker-compose-build-custom-tag.yaml build --parallel"
                 }
@@ -98,20 +98,20 @@ pipeline {
                             fi
                             echo "FRONTEND SERVICE DEPLOYED"
 
-                            POSTGRES_DEPLOY=postgres-deploy
-                            POSTGRES_DEPLOYMENT=$(kubectl get deploy |grep -E "^${POSTGRES_DEPLOY}" |wc -l)
-                            if [ $POSTGRES_DEPLOYMENT == 0 ]; then
-                                kubectl apply -f deployments/postgres-deployment-updated.yaml
-                            else
-                                kubectl delete deploy ${POSTGRES_DEPLOY}
-                                kubectl apply -f deployments/postgres-deployment-updated.yaml
-                            fi
-                            echo "POSTGRES SERVICE DEPLOYED"
+                            // POSTGRES_DEPLOY=postgres-deploy
+                            // POSTGRES_DEPLOYMENT=$(kubectl get deploy |grep -E "^${POSTGRES_DEPLOY}" |wc -l)
+                            // if [ $POSTGRES_DEPLOYMENT == 0 ]; then
+                            //     kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            // else
+                            //     kubectl delete deploy ${POSTGRES_DEPLOY}
+                            //     kubectl apply -f deployments/postgres-deployment-updated.yaml
+                            // fi
+                            // echo "POSTGRES SERVICE DEPLOYED"
 
-                            POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
-                            ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml
+                            // POSTGRES_HOST=$(kubectl get -o jsonpath='{.spec.clusterIP}' services postgres-service)
+                            // ./changeHostName.sh ${POSTGRES_HOST} deployments/env-configmap.yaml deployments/env-configmap-updated.yaml
 
-                            kubectl apply -f deployments/env-configmap-updated.yaml
+                            kubectl apply -f deployments/env-configmap.yaml
                             echo "ENVIRONMENT CONFIMAP DEPLOYED"
 
                             kubectl apply -f deployments/env-secret.yaml
@@ -127,13 +127,6 @@ pipeline {
                             fi
                             echo "USER SERVICE DEPLOYED"
                         '''
-                        // sh "kubectl apply -f deployments/frontend-deployment-updated.yaml"
-                        // sh "kubectl apply -f deployments/postgres-deployment-updated.yaml"
-
-                        // sh "kubectl apply -f deployments/env-configmap-updated.yaml"
-                        // sh "kubectl apply -f deployments/env-secret.yaml"
-                        // sh "kubectl apply -f deployments/user-api-deployment-updated.yaml"
-                        // sh "kubectl apply -f deployments/ingress.yaml"
 
                         echo "APPLICATION DEPLOYED"
                     }
