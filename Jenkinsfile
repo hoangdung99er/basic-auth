@@ -32,6 +32,16 @@ pipeline {
         skipDefaultCheckout(true)
     }
 
+    node("kubeagent") {
+        stage('Get a Maven project') {
+            stage('Shell Execution') {
+                sh '''
+                echo "Hello! I am executing shell"
+                '''
+            }
+        }
+    }
+
     stages {
         stage('Clean up') {
             steps {
@@ -60,15 +70,6 @@ pipeline {
         //     }
         // }
 
-        node("kubeagent") {
-            stage('Get a Maven project') {
-                stage('Shell Execution') {
-                    sh '''
-                    echo "Hello! I am executing shell"
-                    '''
-                }
-            }
-        }
 
         // stage('Build Docker Image') {
         //     steps {
